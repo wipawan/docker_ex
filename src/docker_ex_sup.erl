@@ -25,11 +25,19 @@ start_link() ->
 %%                  type => worker(),       % optional
 %%                  modules => modules()}   % optional
 init([]) ->
+    io:fwrite("Starting docker_ex_sup !~n", []),
     SupFlags =
         #{strategy => one_for_all,
           intensity => 0,
           period => 1},
-    ChildSpecs = [],
+          
+    ChildSpecs =
+        [{docker_ex_http_svr,
+          {docker_ex_http_svr, start_link, []},
+          permanent,
+          10000,
+          worker,
+          [docker_ex_http_svr]}],
     {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions
